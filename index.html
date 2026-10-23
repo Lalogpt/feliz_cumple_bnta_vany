@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¡Feliz Cumple Vany!</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #1e1b4b, #312e81, #4c1d95, #701a75);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .content-container {
+            position: relative;
+            z-index: 10;
+        }
+
+        .title-font {
+            font-family: 'Pacifico', cursive;
+        }
+
+        .glow-text {
+            color: #fff;
+            text-shadow: 
+                0 0 10px #fff,
+                0 0 20px #f472b6,
+                0 0 40px #ec4899,
+                0 0 80px #be185d;
+            animation: pulseGlow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes pulseGlow {
+            from { text-shadow: 0 0 10px #fff, 0 0 20px #f472b6, 0 0 30px #ec4899, 0 0 40px #be185d; }
+            to { text-shadow: 0 0 20px #fff, 0 0 30px #f9a8d4, 0 0 50px #f472b6, 0 0 80px #db2777, 0 0 100px #9d174d; }
+        }
+
+        .bounce-container {
+            display: inline-block;
+            animation: bounceIn 2s cubic-bezier(0.28, 0.84, 0.42, 1) infinite alternate;
+        }
+
+        @keyframes bounceIn {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-15px); }
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        .star {
+            position: absolute;
+            background-color: white;
+            border-radius: 50%;
+            animation: twinkle infinite alternate ease-in-out;
+        }
+        
+        @keyframes twinkle {
+            0% { opacity: 0.2; transform: scale(0.5); }
+            100% { opacity: 1; transform: scale(1.2); box-shadow: 0 0 8px 2px rgba(255, 255, 255, 0.6); }
+        }
+
+        .balloon-container {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 2;
+            overflow: hidden;
+        }
+        
+        .balloon {
+            position: absolute;
+            bottom: -200px;
+            animation: floatUp infinite linear;
+            opacity: 0.9;
+        }
+        
+        @keyframes floatUp {
+            0% { transform: translateY(0) rotate(-5deg); }
+            50% { transform: translateY(-60vh) rotate(5deg); }
+            100% { transform: translateY(-120vh) rotate(-5deg); }
+        }
+
+        /* Llama de la vela */
+        .flame {
+            box-shadow: 0 0 15px #fbbf24, 0 0 30px #f59e0b;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center text-white relative p-4">
+
+    <canvas id="confetti-canvas"></canvas>
+
+    <main class="content-container w-full max-w-3xl flex flex-col items-center text-center space-y-10 py-12">
+        
+        <!-- Título -->
+        <div class="space-y-4">
+            <p class="text-xl md:text-2xl font-light text-pink-200 tracking-wider uppercase mb-2">Es tu día especial</p>
+            <h1 class="title-font text-5xl md:text-7xl lg:text-8xl bounce-container glow-text leading-tight p-4">
+                ¡Feliz Cumple<br/>Vany!
+            </h1>
+            <p class="text-lg md:text-xl font-light text-gray-200 max-w-lg mx-auto mt-6">
+                Que la vida te regale tanta felicidad como la que tú entregas a los demás. ¡Disfruta mucho tu día y dale play a tus mañanitas! 🎂✨
+            </p>
+        </div>
+
+        <!-- Sección del Pastel y Velitas -->
+        <div id="cake-section" class="glass-card p-6 md:p-8 rounded-3xl w-full max-w-md mx-auto flex flex-col items-center">
+            <p class="text-pink-100 mb-4 font-semibold text-lg">Pide un deseo y sóplale a las velitas 🌬️</p>
+            
+            <button id="btn-velitas" class="bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-6 rounded-full mb-8 transition transform hover:scale-105 shadow-lg">
+                🎤 Activar micrófono para soplar
+            </button>
+
+            <!-- Pastel CSS -->
+            <div class="relative w-40 h-32 flex justify-center items-end mt-4">
+                <!-- Velas -->
+                <div class="candle absolute bottom-12 left-6 w-3 h-12 bg-white rounded-sm cursor-pointer z-20">
+                    <div class="flame w-3 h-5 bg-yellow-400 rounded-full absolute -top-5 animate-pulse transition-opacity duration-300"></div>
+                </div>
+                <div class="candle absolute bottom-14 left-18 w-3 h-14 bg-white rounded-sm cursor-pointer z-20">
+                    <div class="flame w-3 h-5 bg-yellow-400 rounded-full absolute -top-5 animate-pulse transition-opacity duration-300"></div>
+                </div>
+                <div class="candle absolute bottom-12 left-30 w-3 h-12 bg-white rounded-sm cursor-pointer z-20">
+                    <div class="flame w-3 h-5 bg-yellow-400 rounded-full absolute -top-5 animate-pulse transition-opacity duration-300"></div>
+                </div>
+                <!-- Base del pastel -->
+                <div class="w-full h-14 bg-pink-400 rounded-t-xl border-b-4 border-pink-600 shadow-[0_10px_20px_rgba(0,0,0,0.3)] z-10"></div>
+                <div class="absolute bottom-0 w-48 h-4 bg-gray-200 rounded-full shadow-md"></div>
+            </div>
+            
+            <p id="deseo-texto" class="hidden text-3xl title-font text-yellow-300 mt-8 glow-text animate-bounce">¡Deseo concedido!</p>
+        </div>
+
+        <!-- Spotify Embed Section -->
+        <div class="glass-card p-6 md:p-8 rounded-3xl w-full max-w-md mx-auto flex flex-col items-center transition-transform hover:scale-105 duration-300 mt-4">
+            <h2 class="text-2xl font-semibold mb-4 text-pink-100 flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-400" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.84.241 1.2zM20.04 9.36C16.32 7.2 9.48 6.96 5.52 8.16c-.6.18-1.2-.18-1.38-.72-.18-.6.18-1.2.72-1.38 4.68-1.32 12.12-1.02 16.44 1.56.54.3 0.72 1.02.42 1.56-.3.48-1.02.72-1.68.18z"/>
+                </svg>
+                Tus Mañanitas
+            </h2>
+            <iframe 
+                src="https://open.spotify.com/embed/track/5kWzM5dWoG54dGyFb5uMuX?utm_source=generator&theme=0" 
+                width="100%" 
+                height="152" 
+                frameBorder="0" 
+                allowfullscreen="" 
+                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
+                loading="lazy" 
+                style="max-width: 400px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
+            </iframe>
+        </div>
+        
+    </main>
+
+    <script>
+        // --- Lógica del Confeti ---
+        const canvas = document.getElementById('confetti-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        const pieces = [];
+        const colors = ['#f472b6', '#fb7185', '#e879f9', '#a78bfa', '#38bdf8', '#fbbf24', '#ffffff'];
+        const numPieces = 150; 
+
+        function initConfetti(extra = false) {
+            let amount = extra ? 100 : numPieces;
+            for (let i = 0; i < amount; i++) {
+                pieces.push({
+                    x: Math.random() * canvas.width,
+                    y: extra ? canvas.height / 2 : Math.random() * canvas.height - canvas.height, 
+                    size: Math.random() * 8 + 6, 
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    speedY: Math.random() * 3 + (extra ? 4 : 2), 
+                    speedX: Math.random() * (extra ? 10 - 5 : 2 - 1), 
+                    rotation: Math.random() * 360, 
+                    rotationSpeed: Math.random() * 10 - 5, 
+                    sway: Math.random() * 0.1 
+                });
+            }
+        }
+        initConfetti();
+
+        function animateConfetti() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            pieces.forEach(p => {
+                p.y += p.speedY;
+                p.x += Math.sin(p.y * p.sway) * 1 + p.speedX; 
+                p.rotation += p.rotationSpeed;
+
+                if (p.y > canvas.height + 20) {
+                    p.y = -20;
+                    p.x = Math.random() * canvas.width;
+                }
+
+                ctx.save();
+                ctx.translate(p.x, p.y);
+                ctx.rotate(p.rotation * Math.PI / 180);
+                ctx.fillStyle = p.color;
+                
+                if (p.size % 2 > 1) {
+                    ctx.beginPath();
+                    ctx.arc(0, 0, p.size / 2, 0, Math.PI * 2);
+                    ctx.fill();
+                } else {
+                    ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
+                }
+                ctx.restore();
+            });
+            requestAnimationFrame(animateConfetti);
+        }
+
+        window.onload = function() {
+            animateConfetti();
+            createStars();
+            createBalloons();
+        };
+
+        // --- Estrellas y Globos ---
+        function createStars() {
+            const starsWrapper = document.createElement('div');
+            starsWrapper.className = 'fixed top-0 left-0 w-full h-full pointer-events-none z-0';
+            document.body.prepend(starsWrapper);
+            
+            for(let i = 0; i < 150; i++) {
+                let s = document.createElement('div');
+                s.className = 'star';
+                let size = Math.random() * 2.5 + 1;
+                s.style.width = size + 'px';
+                s.style.height = size + 'px';
+                s.style.left = Math.random() * 100 + 'vw';
+                s.style.top = Math.random() * 100 + 'vh';
+                s.style.animationDuration = (Math.random() * 3 + 1.5) + 's';
+                s.style.animationDelay = Math.random() * 2 + 's';
+                starsWrapper.appendChild(s);
+            }
+        }
+
+        function createBalloons() {
+            const balloonColors = ['#f472b6', '#c084fc', '#60a5fa', '#34d399', '#fbbf24', '#f87171'];
+            const balloonWrapper = document.createElement('div');
+            balloonWrapper.className = 'balloon-container';
+            document.body.appendChild(balloonWrapper);
+
+            for (let i = 0; i < 15; i++) {
+                let b = document.createElement('div');
+                b.className = 'balloon';
+                b.style.left = (Math.random() * 90 + 5) + 'vw';
+                b.style.animationDuration = (Math.random() * 12 + 10) + 's'; 
+                b.style.animationDelay = (Math.random() * 10) + 's';
+                let color = balloonColors[Math.floor(Math.random() * balloonColors.length)];
+                
+                b.innerHTML = `
+                    <svg viewBox="0 0 50 150" width="60" height="180" xmlns="http://www.w3.org/2000/svg">
+                        <defs><radialGradient id="grad${i}" cx="30%" cy="30%" r="70%"><stop offset="0%" stop-color="#ffffff" stop-opacity="0.8"/><stop offset="100%" stop-color="${color}" stop-opacity="1"/></radialGradient></defs>
+                        <path d="M25,0 C40,0 50,15 50,35 C50,55 35,70 25,75 C15,70 0,55 0,35 C0,15 10,0 25,0 Z" fill="url(#grad${i})" />
+                        <polygon points="20,75 30,75 25,82" fill="${color}" />
+                        <line x1="25" y1="82" x2="25" y2="150" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
+                    </svg>
+                `;
+                balloonWrapper.appendChild(b);
+            }
+        }
+
+        // --- Lógica del Micrófono y Velitas ---
+        const btnVelitas = document.getElementById('btn-velitas');
+        const flames = document.querySelectorAll('.flame');
+        const deseoTexto = document.getElementById('deseo-texto');
+        let audioContext;
+        let micStream;
+
+        function apagarVelitas() {
+            flames.forEach(flame => flame.style.opacity = '0');
+            deseoTexto.classList.remove('hidden');
+            btnVelitas.style.display = 'none';
+            initConfetti(true); // Lluvia extra de confeti
+
+            // Apagar micrófono si estaba encendido
+            if(audioContext && audioContext.state !== 'closed') {
+                audioContext.close();
+            }
+            if(micStream) {
+                micStream.getTracks().forEach(track => track.stop());
+            }
+        }
+
+        // Alternativa: Si Vany prefiere tocarlas en vez de soplar
+        flames.forEach(flame => {
+            flame.parentElement.addEventListener('click', apagarVelitas);
+        });
+
+        btnVelitas.addEventListener('click', async () => {
+            try {
+                micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                btnVelitas.textContent = "¡Acércate y sóplale fuerte! 🌬️";
+                btnVelitas.classList.remove("bg-pink-500", "hover:bg-pink-600");
+                btnVelitas.classList.add("bg-purple-500");
+
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const analyser = audioContext.createAnalyser();
+                const microphone = audioContext.createMediaStreamSource(micStream);
+                const scriptProcessor = audioContext.createScriptProcessor(2048, 1, 1);
+
+                microphone.connect(analyser);
+                analyser.connect(scriptProcessor);
+                scriptProcessor.connect(audioContext.destination);
+
+                scriptProcessor.onaudioprocess = function() {
+                    const array = new Uint8Array(analyser.frequencyBinCount);
+                    analyser.getByteFrequencyData(array);
+                    let values = 0;
+                    for (let i = 0; i < array.length; i++) {
+                        values += array[i];
+                    }
+                    let average = values / array.length;
+
+                    // Si el volumen del micrófono pasa de 45 (un soplido)
+                    if (average > 45) {
+                        apagarVelitas();
+                    }
+                };
+            } catch (err) {
+                btnVelitas.textContent = "Sin micro. ¡Toca las velas para apagarlas!";
+                btnVelitas.classList.replace("bg-pink-500", "bg-gray-500");
+            }
+        });
+    </script>
+</body>
+</html>
